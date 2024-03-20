@@ -3,10 +3,7 @@ package com.javarush.jira.bugtracking.task;
 import com.javarush.jira.bugtracking.Handlers;
 import com.javarush.jira.bugtracking.UserBelong;
 import com.javarush.jira.bugtracking.UserBelongRepository;
-import com.javarush.jira.bugtracking.task.to.ActivityTo;
-import com.javarush.jira.bugtracking.task.to.TaskTo;
-import com.javarush.jira.bugtracking.task.to.TaskToExt;
-import com.javarush.jira.bugtracking.task.to.TaskToFull;
+import com.javarush.jira.bugtracking.task.to.*;
 import com.javarush.jira.bugtracking.tree.ITreeNode;
 import com.javarush.jira.common.util.Util;
 import com.javarush.jira.login.AuthUser;
@@ -149,6 +146,12 @@ public class TaskController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {
         activityService.delete(id);
+    }
+
+//    -------------Task 7----------------------
+    @PutMapping("/{id}/tags")
+    public void addTags(@Valid @RequestBody TaskToTags taskToTags, @PathVariable long id){
+        taskService.addTags(id, taskToTags);
     }
 
     private record TaskTreeNode(TaskTo taskTo, List<TaskTreeNode> subNodes) implements ITreeNode<TaskTo, TaskTreeNode> {

@@ -9,11 +9,13 @@ import com.javarush.jira.bugtracking.task.mapper.TaskExtMapper;
 import com.javarush.jira.bugtracking.task.mapper.TaskFullMapper;
 import com.javarush.jira.bugtracking.task.to.TaskToExt;
 import com.javarush.jira.bugtracking.task.to.TaskToFull;
+import com.javarush.jira.bugtracking.task.to.TaskToTags;
 import com.javarush.jira.common.error.DataConflictException;
 import com.javarush.jira.common.error.NotFoundException;
 import com.javarush.jira.common.util.Util;
 import com.javarush.jira.login.AuthUser;
 import com.javarush.jira.ref.RefType;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static com.javarush.jira.bugtracking.ObjectType.TASK;
 import static com.javarush.jira.bugtracking.task.TaskUtil.fillExtraFields;
@@ -130,6 +133,14 @@ public class TaskService {
                 .orElseThrow(() -> new NotFoundException(String
                         .format("Not found assignment with userType=%s for task {%d} for user {%d}", userType, id, userId)));
         assignment.setEndpoint(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void addTags(Long id, TaskToTags taskToTags){
+        TaskRepository repository = handler.getRepository();
+        Task existed = repository.getExisted(id);
+
+        existed.getTags().addAll(taskToTags.getTags());
     }
 
     private void checkAssignmentActionPossible(long id, String userType, boolean assign) {
